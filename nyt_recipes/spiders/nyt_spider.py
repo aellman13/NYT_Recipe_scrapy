@@ -57,14 +57,9 @@ class NYTSpider(Spider):
 		# extract the yield number in string form from yield string 
 		
 		yield_full   = response.xpath('//span[@class="recipe-yield-value"]/text()').getall()[0]
-		yield_num    = re.findall(r"[\d+\d\/\d]+",yield_full)
-		
-		yield_metric = re.findall(r"[A-Za-z]+", yield_full)[-1]
 
 		time_full    = response.xpath('//span[@class="recipe-yield-value"]/text()').getall()[1]
-		time_num     = re.findall(r"[\d+\d\/\d]+",time_full)
 		
-		time_metric  = re.findall(r"\b(?:minutes|hours|hour|day|days)\b", time_full)
 		try:
 			cook_category = response.xpath('//div[@class="grid-wrap"]/article/header/a/text()').get().strip()
 		except:
@@ -73,25 +68,28 @@ class NYTSpider(Spider):
 			description  = response.xpath('//div[@class="topnote"]/p/text()').getall()
 		except:
 			description  = None
+		num_ratings = int(response.xpath('//span[@itemprop="ratingCount"]/text()').get())
 		author       = response.xpath('//span[@itemprop="author"]/text()').get().strip()
 		recipe_title = response.xpath('//h1[@class="recipe-title title name"]/text()').get().strip()
-		rating 		 = response.xpath('//span[@itemprop="ratingValue"]/text()').get()
+		rating 		 = int(response.xpath('//span[@itemprop="ratingValue"]/text()').get())
 		ingredient_amount = [x.strip() for x in response.xpath('//span[@class="quantity"]/text()').getall()]
-		ingredient_name   = [x.strip()+'---' for x in response.xpath('//span[@class="ingredient-name"]/text()').getall()]
-		cook_instructions = [x.strip()+'---' for x in response.xpath('//ol[@class="recipe-steps"]/li/text()').getall()]
+		ingredient_name   = [x.strip() + '---' for x in response.xpath('//span[@class="ingredient-name"]/text()').getall()]
+		cook_instructions = [x.strip() for x in response.xpath('//ol[@class="recipe-steps"]/li/text()').getall()]
 		url 			= response.xpath('//meta[@property="og:url"]/@content').get()
 		#username = response.xpath('//span[@class="nytc---notessection---noteOwner"]/text()').getall()
 		tags         = response.xpath('//div[@class="tags-nutrition-container"]/a/text()').getall()
+		
 		try:
 			picture_src  = response.xpath('//div[@class="recipe-intro"]/div[1]/img/@src').get()
 		except:
-			picture_src = None
+			picture_src = 'https://i.pinimg.com/564x/51/b5/6b/51b56b3b04cfce032209558197e1f993.jpg'
+		
 		item = NytrecipesItem()
-		item['yield_metric'] 	= yield_metric
-		item['time_num'] 		= time_num
-		item['time_metric'] 	= time_metric
+		item['yield_'] 			= yield_full
+		item['time'] 			= time_full
 		item['cook_category'] 	= cook_category
 		item['description'] 	= description
+		item['num_ratings']		= num_ratings
 		item['author'] 			= author
 		item['recipe_title'] 	= recipe_title
 		item['rating'] 			= rating

@@ -10,10 +10,9 @@ import scrapy
 
 class NytrecipesItem(scrapy.Item):
     
-    yield_num = scrapy.Field()
-    yield_metric = scrapy.Field()
-    time_num = scrapy.Field()
-    time_metric = scrapy.Field()
+    yield_ = scrapy.Field()
+    num_ratings = scrapy.Field()
+    time = scrapy.Field()
     description = scrapy.Field()
     author = scrapy.Field()
     recipe_title = scrapy.Field()
