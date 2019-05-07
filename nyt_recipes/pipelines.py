@@ -9,7 +9,7 @@ from scrapy.exporters import CsvItemExporter
 class NytRecipesPipeline(object):
 
     def __init__(self):
-        self.filename = 'NYT_recipes.csv'
+        self.filename = 'NYT_recipestest.csv'
 
     def open_spider(self, spider):
         self.csvfile = open(self.filename, 'wb')
